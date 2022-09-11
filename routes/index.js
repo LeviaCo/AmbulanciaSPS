@@ -48,7 +48,7 @@ router.post("/send-email", (req, res) => {
             });
             const mailOptions = {
                 from: "Web SPS Ambulancias <ambulanciasps.web@gmail.com>",
-                to: "gasparlabastie.g@gmail.com",
+                to: "info@ambulanciasps.com.ar",
                 subject: "Formulario web",
                 html: contentHTML,
             };
@@ -60,7 +60,7 @@ router.post("/send-email", (req, res) => {
         }
     }
     sendMail()
-        .then(result => res.status(200).send("enviado"))
+        .then(result => res.status(200).redirect("/success.html"))
         .catch(error => console.log(error.message));
 });
 

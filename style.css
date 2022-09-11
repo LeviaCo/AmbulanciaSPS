@@ -392,7 +392,6 @@ body {
     padding: 0;
     height: 100%;
     width: 100%;
-    background-color: #547873;
     list-style: none;
 }
 
@@ -402,7 +401,7 @@ body {
 }
 
 #header {
-    height: 85px;
+    height: 13%;
     width: 100%;
     display: block;
     background-color: #547873;
@@ -463,7 +462,7 @@ nav a {
 #inicio_img {
     width: 100%;
     height: 100%;
-    margin-top: 85px;
+    margin-top: 6%;
     vertical-align: -webkit-baseline-middle;
 }
 
@@ -485,7 +484,6 @@ nav a {
 }
 
 #inicio #contenido_texto {
-    width: 60%;
     display: inline-block;
     position: relative;
     top: 50%;
@@ -496,13 +494,13 @@ nav a {
 }
 
 #inicio #contenido_texto h1 {
-    font-size: 300%;
+    font-size: 12.5vh;
     font-weight: 100;
     color: #F7ECE0;
 }
 
 #inicio #contenido_texto p {
-    font-size: 125%;
+    font-size: 5vh;
     color: #FAFAF2;
 }
 
@@ -622,13 +620,13 @@ nav a {
 #contacto>div {
     width: 100%;
     height: 650px;
+    background: #547873;
 }
 
 #contacto>div>div {
     float: left;
     width: 50%;
     color: #FFFEFA;
-    background: #547873;
 }
 
 #contacto #contenedor_1 {
@@ -637,8 +635,8 @@ nav a {
     line-height: 35px;
     font-weight: 750;
     padding-top: 50px;
-    height: 600px;
     text-align: center;
+    height: 600px;
 }
 
 #contacto #contenedor_1 h2 {
@@ -662,7 +660,7 @@ nav a {
     list-style: none;
     text-align: left;
     letter-spacing: 1px;
-    line-height: 60px;
+    line-height: 55px;
 }
 
 #contacto #contenedor_1 li {
@@ -821,36 +819,12 @@ footer p {
     margin: 0;
 }
 
-#Success{
-    display: inline-block;
-    text-align: center;
-    width: 100%;
+#Success #inicio h1{
+    font-size: 10vh;
 }
 
-#Success #blue_box{
-    background-color: #0A4A6E;
-    color: #F7ECE0;
-    position: relative;
-}
-
-#Success h1{
-    font-weight: 100;
-    display: inline-block;
-    margin-top: 25px;
-    margin-bottom: 50px;
-}
-
-#Success #parrafo{
-    height: 150px;
-}
-
-#Success p{
-    font-family: 'Open Sans', sans-serif;
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%);
-    width: 40%;
-    color: #FAFAF2;
+#Success #inicio p{
+    font-size: 4vh;
 }
 
 /*
