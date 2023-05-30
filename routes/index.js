@@ -48,7 +48,7 @@ router.post("/send-email", (req, res) => {
             });
             const mailOptions = {
                 from: "Web SPS Ambulancias <ambulanciasps.web@gmail.com>",
-                to: "info@ambulanciasps.com.ar",
+                to: "leviaconecta@gmail.com",
                 subject: "Formulario web",
                 html: contentHTML,
             };
@@ -58,6 +58,8 @@ router.post("/send-email", (req, res) => {
         } catch (err) {
             console.log(err);
         }
+
+        console.log("Correo electrónico a enviar:", contentHTML);
     }
     sendMail()
         .then(result => res.status(200).redirect("/success.html"))
