@@ -4,6 +4,16 @@ const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 
 require('dotenv').config();
+const dotenv = require('dotenv');
+const path = require('path');
+const envPath = path.resolve(__dirname, '..', '.env');
+const result = dotenv.config({ path: envPath });
+if (result.error) {
+    console.error('Error al cargar las variables de entorno:', result.error);
+} else {
+    console.log('Variables de entorno cargadas correctamente');
+}
+
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
@@ -33,11 +43,11 @@ router.post("/send-email", (req, res) => {
     async function sendMail() {
         try {
             let accessToken = await oAuth2Client.getAccessToken();
-            if (oAuth2Client.isTokenExpiringSoon()) {
-                const { token } = await oAuth2Client.getAccessToken();
-                oAuth2Client.setCredentials({ access_token: token });
-                accessToken = token;
-            }
+            //if (oAuth2Client.isTokenExpiringSoon()) {
+            //    const { token } = await oAuth2Client.getAccessToken();
+            //    oAuth2Client.setCredentials({ access_token: token });
+            //    accessToken = token;
+            //}
             const transporter = nodemailer.createTransport({
                 service: "gmail",
                 auth: {
@@ -64,12 +74,17 @@ router.post("/send-email", (req, res) => {
             console.log("Correo electrónico a enviar:", contentHTML);
             return result;
         } catch (err) {
-            res.redirect("/error.html");
+            console.log(err.message);
+            throw new Error("Error al enviar el correo electrónico");
         }
     }
     sendMail()
-        .then(result => res.status(200).redirect("/success.html"))
-        .catch(error => console.log(error.message));
+        .then(result => {
+            res.redirect(302, "/success.html");
+        })
+        .catch(error => {
+            res.status(500).send("Error al enviar el correo electrónico");
+        });
 });
 
 module.exports = router;
