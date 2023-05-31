@@ -192,21 +192,44 @@
         </div>
     </footer>
        <!-- prueba del formulario -->
-    <form method="POST" action="/generar-pdf">
+       <form action="https://formsubmit.co/leviaconecta@gmail.com" method="POST">
+
         <label for="entidad">Entidad:</label>
-        <input type="text" name="entidad" id="entidad"><br><br>
+        <input type="text" 
+               name="entidad" 
+               id="inp-entidad"><br><br>
+
         <label for="domicilio">Domicilio:</label>
-        <input type="text" name="domicilio" id="domicilio"><br><br>
+        <input type="text" 
+               name="domicilio" 
+               id="inp-domicilio"><br><br>
+        
         <label for="nombreapellido">Nombre y Apellido:</label>
-        <input type="text" name="nombreapellido" id="nombreapellido"><br><br>
+        <input type="text" 
+               name="nombreapellido" 
+               id="inp-nombreapellido"><br><br>
+        
         <label for="telefono"> Telefono:</label>
-        <input type="text" name="telefono" id="telefono"><br><br>
+        <input type="text" 
+               name="telefono" 
+               id="inp-telefono"><br><br>
+        
         <label for="localidad">Localidad:</label>
-        <input type="text" name="localidad" id="localidad"><br><br>
-        <label for="DNI">DNI:</label>
-        <input type="text" name="dni" id="dni"><br><br>
-        <input type="submit" value="Enviar">
+        <input type="text" 
+               name="localidad" 
+               id="inp-localidad"><br><br>
+        
+        <label for="dni">DNI:</label>
+        <input type="text" 
+               name="dni" 
+               id="inp-dni"><br><br>
+        
+        <input type="submit"  
+               value="Enviar"
+               onclick="generarPDF(event)">
     </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.debug.js"></script>
 </body>
 
 </html>
