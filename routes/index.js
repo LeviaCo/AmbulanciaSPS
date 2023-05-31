@@ -3,23 +3,24 @@ const router = express.Router();
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
 
+require('dotenv').config();
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URI = process.env.REDIRECT_URI;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
+
 router.post("/send-email", (req, res) => {
     const { nombre, email, asunto, mensaje } = req.body;
 
     const contentHTML = `
-        <h1>Formulario de contacto</h1>
-        <ul>
-            <li>Nombre: ${nombre}</li>
-            <li>E-mail: ${email}</li>
-            <li>Asunto: ${asunto}</li>
-        </ul>
-        <p>${mensaje}</p>
-    `;
-
-    const CLIENT_ID = "16137418587-rbno14t391pqfddbl1h2u03opjvmukoo.apps.googleusercontent.com";
-    const CLIENT_SECRET = "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";
-    const REDIRECT_URI = "https://developers.google.com/oauthplayground";
-    const REFRESH_TOKEN = "1//046gzMxw_QZZBCgYIARAAGAQSNwF-L9IrxHSlBAGU3nMgdcLQduaMAbMoIvDI65ilgVaKqH7azmpZRtYPt8W3SCGscr-rwuWfcBo";
+    <h1>Formulario de contacto</h1>
+    <ul>
+        <li>Nombre: ${nombre}</li>
+        <li>E-mail: ${email}</li>
+        <li>Asunto: ${asunto}</li>
+    </ul>
+    <p>${mensaje}</p>
+  `;
 
     const oAuth2Client = new google.auth.OAuth2(
         CLIENT_ID,
@@ -31,12 +32,17 @@ router.post("/send-email", (req, res) => {
 
     async function sendMail() {
         try {
-            const accessToken = await oAuth2Client.getAccessToken()
+            let accessToken = await oAuth2Client.getAccessToken();
+            if (oAuth2Client.isTokenExpiringSoon()) {
+                const { token } = await oAuth2Client.getAccessToken();
+                oAuth2Client.setCredentials({ access_token: token });
+                accessToken = token;
+            }
             const transporter = nodemailer.createTransport({
                 service: "gmail",
                 auth: {
                     type: "OAuth2",
-                    user: "ambulanciasps.web@gmail.com",
+                    user: "leviapages@gmail.com",
                     clientId: CLIENT_ID,
                     clientSecret: CLIENT_SECRET,
                     refreshToken: REFRESH_TOKEN,
@@ -47,19 +53,19 @@ router.post("/send-email", (req, res) => {
                 }
             });
             const mailOptions = {
-                from: "Web SPS Ambulancias <ambulanciasps.web@gmail.com>",
+                from: "Web SPS Ambulancias <leviapages@gmail.com>",
                 to: "leviaconecta@gmail.com",
                 subject: "Formulario web",
                 html: contentHTML,
             };
 
             const result = await transporter.sendMail(mailOptions);
+
+            console.log("Correo electrónico a enviar:", contentHTML);
             return result;
         } catch (err) {
-            console.log(err);
+            res.redirect("/error.html");
         }
-
-        console.log("Correo electrónico a enviar:", contentHTML);
     }
     sendMail()
         .then(result => res.status(200).redirect("/success.html"))
