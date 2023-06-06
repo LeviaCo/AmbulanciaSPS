@@ -1,8 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const nodemailer = require("nodemailer");
-//const { google } = require("googleapis");
 const { GoogleAuth } = require('google-auth-library');
+
+const fs = require('fs');
+const credentialsPath = './credentials.json';
+const credentialsData = fs.readFileSync(credentialsPath);
+const credentials = JSON.parse(credentialsData);
+const {
+    client_email,
+    private_key,
+} = credentials;
 
 require('dotenv').config();
 const dotenv = require('dotenv');
@@ -37,9 +45,11 @@ router.post("/send-email", (req, res) => {
         credentials: {
             client_id: CLIENT_ID,
             client_secret: CLIENT_SECRET,
+            client_email: credentials.client_email,
+            private_key: credentials.private_key,
             redirect_uri: REDIRECT_URI,
-            refresh_token: REFRESH_TOKEN,
-        },
+            refresh_token: REFRESH_TOKEN
+        }
     });
 
     async function sendMail() {
@@ -54,12 +64,16 @@ router.post("/send-email", (req, res) => {
                     clientId: CLIENT_ID,
                     clientSecret: CLIENT_SECRET,
                     refreshToken: REFRESH_TOKEN,
-                    accessToken: client.credentials.access_token,
+                    credentials: {
+                        client_email: client_email,
+                        private_key: private_key
+                    }
                 },
                 tls: {
                     rejectUnauthorized: false
                 }
             });
+
             const mailOptions = {
                 from: "Web SPS Ambulancias <leviapages@gmail.com>",
                 to: "leviaconecta@gmail.com",
