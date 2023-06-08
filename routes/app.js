@@ -1,7 +1,16 @@
 const express = require("express");
 const router = express.Router();
 const nodemailer = require("nodemailer");
-const { OAuth2Client } = require('google-auth-library');
+const { GoogleAuth } = require('google-auth-library');
+
+const fs = require('fs');
+const credentialsPath = './credentials.json';
+const credentialsData = fs.readFileSync(credentialsPath);
+const credentials = JSON.parse(credentialsData);
+const {
+    client_email,
+    private_key,
+} = credentials;
 
 require('dotenv').config();
 const dotenv = require('dotenv');
@@ -19,19 +28,6 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = process.env.REDIRECT_URI;
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 
-async function getNewAccessTokenFromRefreshToken(refreshToken) {
-    const oAuth2Client = new OAuth2Client({
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        redirectUri: REDIRECT_URI,
-        refreshToken: refreshToken
-    });
-
-    const { tokens } = await oAuth2Client.refreshToken(refreshToken);
-
-    return tokens.access_token;
-}
-
 router.post("/send-email", (req, res) => {
     const { nombre, email, asunto, mensaje } = req.body;
 
@@ -45,29 +41,20 @@ router.post("/send-email", (req, res) => {
     <p>${mensaje}</p>
   `;
 
-    const oAuth2Client = new OAuth2Client({
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        redirectUri: REDIRECT_URI,
-        refreshToken: REFRESH_TOKEN,
-
-        refreshAccessTokenFn: async () => {
-            try {
-                const newAccessToken = await getNewAccessTokenFromRefreshToken(REFRESH_TOKEN);
-                return newAccessToken;
-            } catch (error) {
-                console.error('Error al obtener un nuevo token de acceso:', error);
-                throw new Error('Error al obtener un nuevo token de acceso');
-            }
+    const auth = new GoogleAuth({
+        credentials: {
+            client_id: CLIENT_ID,
+            client_secret: CLIENT_SECRET,
+            client_email: credentials.client_email,
+            private_key: credentials.private_key,
+            redirect_uri: REDIRECT_URI,
+            refresh_token: REFRESH_TOKEN
         }
     });
 
     async function sendMail() {
         try {
-            let accessToken = (await oAuth2Client.getAccessToken()).token;
-            oAuth2Client.setCredentials({
-                access_token: accessToken
-            });
+            const client = await auth.getClient();
 
             const transporter = nodemailer.createTransport({
                 service: "gmail",
@@ -77,8 +64,10 @@ router.post("/send-email", (req, res) => {
                     clientId: CLIENT_ID,
                     clientSecret: CLIENT_SECRET,
                     refreshToken: REFRESH_TOKEN,
-                    accessToken: accessToken,
-                    accessUrl: "https://oauth2.googleapis.com/token"
+                    credentials: {
+                        client_email: client_email,
+                        private_key: private_key
+                    }
                 },
                 tls: {
                     rejectUnauthorized: false
